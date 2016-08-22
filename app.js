@@ -87,4 +87,21 @@ db.connect(function(err) {
 	l('info', 'Database', 'Connected as #'+db.threadId);
 });
 
+const pogobuf = require('pogobuf');
+
+var login = new pogobuf.PTCLogin(),
+    client = new pogobuf.Client();
+
+login.login('pgofandx1', 'plmokm123')
+.then(function (token) {
+    client.setAuthInfo('ptc', token);
+    client.setPosition(52.170891, 22.291843);
+    return client.init();
+}).then(function () {
+    // Make some API calls!
+    return client.getInventory(0);
+}).then(function (inventory){
+    // Use the returned data
+	l('info', 'pokeTest', 'Inv: ', inventory);
+});
 

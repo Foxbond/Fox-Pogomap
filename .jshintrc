@@ -122,4 +122,5 @@
 		"Java", "JavaFX", "$ARG" //no effect
 	]
 	//,	"indent" : 2 // Specify indentation spacing
+,"esversion":6
 }

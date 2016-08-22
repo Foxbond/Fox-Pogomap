@@ -10,21 +10,21 @@ var log = new (winston.Logger)({
       new (winston.transports.Console)({'timestamp':function (){
     	  var d = new Date();
     	  return '['+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2)+']';
-      },'colorize':true})
+      },'colorize':true, prettyPrint:true})
     ]
 });
 
 var spaceStore = '                                                                                                           ';
 
 function strAlign (str, len) {
-	if (len > str.length){
+	if (str.length > len){
 		return str.substring(0, (len-3))+'...';
 	}
 	return str+spaceStore.substring(0,(len-str.length));
 }
 
 /** Config ***************************************************************************/
-var cfg = require('config.json');
+var cfg = require('./config.json');
 
 
 /** Init *****************************************************************************/
@@ -35,7 +35,7 @@ if (!cfg.logConsole) {
 
 if (cfg.logFile) {
 	log.info("Added logging to file ("+cfg.logFilename+")");
-	log.add(log.transports.File, { filename: cfg.logFilename, timestamp:true });
+	log.add(log.transports.File, { filename: cfg.logFilename, timestamp:true, colorize:false, json:true, prettyPrint:false });
 }
 log.info('Logging level set to: '+cfg.logLevel);
 log.level = cfg.logLevel;
@@ -46,10 +46,15 @@ if (cfg.logBeautifier) {
 	log.filters.push(function(level, msg, meta) {
 		if (typeof meta !== 'undefined'){
 			if (typeof meta.module !== 'undefined') {
-				return '['+strAlign(meta.module, 10)+'] '+msg;
+				var str = '['+strAlign(meta.module, cfg.logBeautifierLen)+'] '+msg;
+				delete meta.module;
+				return str;
 			}
 		}
+		return msg;
 	});
+	
+	log.info('Active', {module:'Beautifier'});
 }
 
 //hacky addon
@@ -65,7 +70,7 @@ var l = function (level, module, msg, meta) {
 };
 
 /** Libs *****************************************************************************/
-log.info('Loading libraries');
+log.info('Loading libraries', {module:'root'});
 var mysql = require('mysql');
 
 
@@ -74,10 +79,12 @@ var mysql = require('mysql');
 var db = mysql.createConnection(cfg.db.dev);
 
 db.connect(function(err) {
-	  if (err) {
-	    log.error('error connecting: ' + err.stack);
-	    return;
-	  }
+	if (err) {
+		l('error', 'Database', 'Connecting failed!', err);
+		return;
+	}
+	
+	l('info', 'Database', 'Connected as #'+db.threadId);
+});
 
-	  log.info('connected as id ' + db.threadId);
-	});
+

@@ -1,5 +1,15 @@
 config.json
+brudnopis.txt
 node_modules/*
 .metadata/*
 .settings/*
 RemoteSystemsTempFiles/*
+
+
+
+.jshintrc
+.metadata
+.project
+.settings
+.sublime-project
+.tern-project

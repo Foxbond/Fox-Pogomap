@@ -87,4 +87,46 @@ db.connect(function(err) {
 	l('info', 'Database', 'Connected as #'+db.threadId);
 });
 
+var Pokeio = require('pokemon-go-node-api');
+var a = new Pokeio.Pokeio();
 
+a.init('pgofandx1', 'plmokm123', {'type':'coords',coords:{latitude:52.170891, longitude:22.291843}}, 'ptc', function(err) {
+    if (err) throw err;
+
+    log.info('1[i] Current location: ' + a.playerInfo.locationName);
+    log.info('1[i] lat/long/alt: : ' + a.playerInfo.latitude + ' ' + a.playerInfo.longitude + ' ' + a.playerInfo.altitude);
+
+    a.GetProfile(function(err, profile) {
+        if (err) throw err;
+
+        log.info('1[i] Username: ' + profile.username);
+        log.info('1[i] Poke Storage: ' + profile.poke_storage);
+        log.info('1[i] Item Storage: ' + profile.item_storage);
+
+        var poke = 0;
+        if (profile.currency[0].amount) {
+            poke = profile.currency[0].amount;
+        }
+
+        log.info('1[i] Pokecoin: ' + poke);
+        log.info('1[i] Stardust: ' + profile.currency[1].amount);
+
+        setInterval(function(){
+            a.Heartbeat(function(err,hb) {
+                if(err) {
+                    log.info(err);
+                }
+
+                for (var i = hb.cells.length - 1; i >= 0; i--) {
+                    if(hb.cells[i].NearbyPokemon[0]) {
+                        //log.info(a.pokemonlist[0])
+                        var pokemon = a.pokemonlist[parseInt(hb.cells[i].NearbyPokemon[0].PokedexNumber)-1];
+                        log.info('1[+] There is a ' + pokemon.name + ' near.');
+                    }
+                }
+
+            });
+        }, 5000);
+
+    });
+});

@@ -1,0 +1,15 @@
+{
+  "name": "fox-pogomap",
+  "version": "1.0.0",
+  "description": "Foxbond's Pokemon Go Map",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michal (Foxbond) Chraniuk",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "mysql": "^2.11.1",
+    "pogobuf": "^1.6.0"
+  }
+}

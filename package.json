@@ -8,6 +8,7 @@
   },
   "author": "Michal (Foxbond) Chraniuk",
   "license": "UNLICENSED",
+  "private": true,
   "dependencies": {
     "mysql": "^2.11.1",
     "pogobuf": "^1.6.0"
